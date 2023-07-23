@@ -79,12 +79,6 @@ class _RandomNumberState extends State<RandomNumber> {
     setState(() => _busy = false);
   }
 
-  Future<void> setMaxValue(int value) async {
-    setState(() {
-      maxValue = value;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,13 +94,15 @@ class _RandomNumberState extends State<RandomNumber> {
               children: [
                 NummericUpDown(
                     label: 'Min:',
+                    maxValue: maxValue,
                     onChanged: (value) async {
-                      minValue = value;
+                      setState(() => minValue = value);
                     }),
                 NummericUpDown(
                     label: 'Max:',
+                    minValue: minValue,
                     onChanged: (value) async {
-                      maxValue = value;
+                      setState(() => maxValue = value);
                     }),
               ]),
         )),

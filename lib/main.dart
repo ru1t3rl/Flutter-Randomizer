@@ -27,10 +27,10 @@ class _MyAppState extends State<MyApp> {
           useMaterial3: true,
         ),
         home: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-              title: const Text('Randomizer'),
-            ),
+            // appBar: AppBar(
+            //   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            //   title: const Text('Randomizer'),
+            // ),
             body: Padding(
                 padding: const EdgeInsets.all(12),
                 child: [

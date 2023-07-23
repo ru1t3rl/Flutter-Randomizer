@@ -1,14 +1,20 @@
+import 'dart:js_interop';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class NummericUpDown extends StatefulWidget {
   int value;
+  int? minValue;
+  int? maxValue;
   final int step;
   final String label;
   final Future<void> Function(int) onChanged;
 
   NummericUpDown({
     Key? key,
+    this.minValue,
+    this.maxValue,
     this.value = 0,
     this.step = 1,
     required this.label,
@@ -26,7 +32,6 @@ class _NummericUpDownState extends State<NummericUpDown> {
   @override
   void initState() {
     super.initState();
-    //_inputTEC.text = widget.value.toString();
     _inputTEC.text = _statefullValue.toString();
   }
 
@@ -42,14 +47,16 @@ class _NummericUpDownState extends State<NummericUpDown> {
       case NummericUpDownUpdateType.up:
         setState(() {
           _statefullValue += widget.step;
-          widget.value = widget.value.clamp(-9999, 9999);
+          widget.value = widget.value
+              .clamp(widget.minValue ?? -9999, widget.maxValue ?? 9999);
           widget.value = _statefullValue;
         });
         break;
       case NummericUpDownUpdateType.down:
         setState(() {
           _statefullValue -= widget.step;
-          widget.value = widget.value.clamp(-9999, 9999);
+          widget.value = widget.value
+              .clamp(widget.minValue ?? -9999, widget.maxValue ?? 9999);
           widget.value = _statefullValue;
         });
         break;
@@ -83,7 +90,11 @@ class _NummericUpDownState extends State<NummericUpDown> {
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                onEditingComplete: _updateFromTextFieldValue,
+                onChanged: (value) {
+                  int.parse(value) == _statefullValue
+                      ? _updateFromTextFieldValue()
+                      : "";
+                },
                 decoration: const InputDecoration(
                     border: InputBorder.none,
                     counterText: '',
