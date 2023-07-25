@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_meedu_videoplayer/meedu_player.dart';
 
@@ -29,13 +28,16 @@ class _FilePreviewCardState extends State<FilePreviewCard> {
   late final String _fileName;
   late final File _file;
   late final String _type;
+  late final bool _isFolder;
 
   @override
   void initState() {
     super.initState();
     _file = File(widget.filePath);
     _fileName = widget.filePath.split(Platform.pathSeparator).last;
+
     _type = widget.filePath.split('.').last;
+    _isFolder = _file.statSync().type == FileSystemEntityType.directory;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _init();
@@ -109,10 +111,13 @@ class _FilePreviewCardState extends State<FilePreviewCard> {
                         ? MeeduVideoPlayer(
                             controller: _controller,
                           )
-                        : const Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Icon(Icons.insert_drive_file),
-                          ),
+                        : _isFolder
+                            ? const Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Icon(Icons.folder))
+                            : const Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Icon(Icons.insert_drive_file)),
                 Positioned(
                   bottom: 0,
                   left: 0,
