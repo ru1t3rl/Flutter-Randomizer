@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_randomizer/widgets/text_checkbox.dart';
 
 import '../widgets/file_preview_card.dart';
 
@@ -163,7 +164,7 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Text('Directory Path:',
+                          const Text('Path:',
                               textScaleFactor: 1.25,
                               style: TextStyle(fontWeight: FontWeight.bold)),
                           const SizedBox(width: 20),
@@ -186,51 +187,55 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                               onPressed: !_busy ? setDirectoryPath : null,
                               child: const Text('Browse'))
                         ]),
-                    Row(
-                      children: [
-                        Checkbox(
-                            value: getFiles,
-                            onChanged: !_busy
-                                ? (value) {
-                                    setState(() {
-                                      getFiles = value!;
-                                    });
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Wrap(
+                        alignment: WrapAlignment.start,
+                        crossAxisAlignment: WrapCrossAlignment.start,
+                        children: [
+                          TextCheckbox(
+                              label: 'Get Files',
+                              value: getFiles,
+                              onChanged: !_busy
+                                  ? (value) {
+                                      setState(() {
+                                        getFiles = value!;
+                                      });
 
-                                    _dirty = true;
-                                  }
-                                : null),
-                        const Text('Get Files'),
-                        const SizedBox(width: 20),
-                        Checkbox(
-                            value: getDirectories,
-                            onChanged: !_busy
-                                ? (value) {
-                                    setState(() {
-                                      getDirectories = value!;
-                                    });
+                                      _dirty = true;
+                                    }
+                                  : null),
+                          TextCheckbox(
+                              label: 'Get Directories',
+                              value: getDirectories,
+                              onChanged: !_busy
+                                  ? (value) {
+                                      setState(() {
+                                        getDirectories = value!;
+                                      });
 
-                                    _dirty = true;
-                                  }
-                                : null),
-                        const Text('Get Directories'),
-                        const SizedBox(width: 20),
-                        Checkbox(
-                            value: recursive,
-                            onChanged: !_busy
-                                ? (value) {
-                                    setState(() {
-                                      recursive = value!;
-                                    });
+                                      _dirty = true;
+                                    }
+                                  : null),
+                          TextCheckbox(
+                              label: 'Recursive',
+                              value: recursive,
+                              onChanged: !_busy
+                                  ? (value) {
+                                      setState(() {
+                                        recursive = value!;
+                                      });
 
-                                    _dirty = true;
-                                  }
-                                : null),
-                        const Text('Recursive'),
-                      ],
+                                      _dirty = true;
+                                    }
+                                  : null),
+                        ],
+                      ),
                     ),
                     Row(
                       children: [
-                        Checkbox(
+                        TextCheckbox(
+                            label: 'Use Regex',
                             value: useRegex,
                             onChanged: !_busy
                                 ? (value) {
@@ -240,7 +245,6 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                                     });
                                   }
                                 : null),
-                        const Text('Regex'),
                         const SizedBox(width: 20),
                         Expanded(
                           child: TextFormField(

@@ -6,7 +6,7 @@ import '../views/random_file_picker.dart';
 import '../views/random_number.dart';
 
 void main() {
-  initMeeduPlayer(androidUseMediaKit: true);
+  initMeeduPlayer();//androidUseMediaKit: true);
   runApp(const MyApp());
 }
 
@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> {
       ),
       home: Scaffold(
         body: Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.fromLTRB(12, 50, 12, 12),
             child: [
               const Home(),
               const RandomFilePicker(),

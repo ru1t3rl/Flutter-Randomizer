@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_meedu_videoplayer/meedu_player.dart';
+import 'package:open_app_file/open_app_file.dart';
 
 class FilePreviewCard extends StatefulWidget {
   final String filePath;
@@ -82,6 +83,8 @@ class _FilePreviewCardState extends State<FilePreviewCard> {
       _fullscreenController.setPlaybackSpeed(1);
       _fullscreenController.play();
       _fullscreenController.setFullScreen(true, context);
+    } else {
+      OpenAppFile.open(widget.filePath);
     }
   }
 
