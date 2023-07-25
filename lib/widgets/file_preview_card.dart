@@ -78,7 +78,7 @@ class _FilePreviewCardState extends State<FilePreviewCard> {
       await widget.onTap!();
     }
 
-    if (_type == 'mp4') {
+    if (_type.toLowerCase() == 'mp4' || _type.toLowerCase() == 'mov') {
       _fullscreenController.setVolume(1);
       _fullscreenController.setPlaybackSpeed(1);
       _fullscreenController.play();
@@ -110,7 +110,7 @@ class _FilePreviewCardState extends State<FilePreviewCard> {
               child: Stack(fit: StackFit.expand, children: [
                 RegExp('(jpe?g|png|gif|bmp)').hasMatch(_type)
                     ? Image.file(_file, fit: BoxFit.cover)
-                    : _type == 'mp4'
+                    : _type == 'mp4' || _type == 'mov'
                         ? MeeduVideoPlayer(
                             controller: _controller,
                           )

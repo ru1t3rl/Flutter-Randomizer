@@ -157,6 +157,7 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Card(
+              
               child: Padding(
                   padding: const EdgeInsets.all(15),
                   child: Column(children: [
