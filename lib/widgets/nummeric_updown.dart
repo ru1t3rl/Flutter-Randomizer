@@ -1,12 +1,11 @@
-import 'dart:js_interop';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// ignore: must_be_immutable
 class NummericUpDown extends StatefulWidget {
   int value;
-  int? minValue;
-  int? maxValue;
+  late int? minValue;
+  late int? maxValue;
   final int step;
   final String label;
   final Future<void> Function(int) onChanged;

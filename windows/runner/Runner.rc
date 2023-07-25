@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "ru1t3rl" "\0"
-            VALUE "FileDescription", "materialui" "\0"
+            VALUE "CompanyName", "com.example" "\0"
+            VALUE "FileDescription", "flutter_randomizer" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "materialui" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2023 ru1t3rl. All rights reserved." "\0"
-            VALUE "OriginalFilename", "materialui.exe" "\0"
-            VALUE "ProductName", "materialui" "\0"
+            VALUE "InternalName", "flutter_randomizer" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
+            VALUE "OriginalFilename", "flutter_randomizer.exe" "\0"
+            VALUE "ProductName", "flutter_randomizer" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

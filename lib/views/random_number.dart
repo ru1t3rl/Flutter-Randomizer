@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:materialui/widgets/nummeric_updown.dart';
+import '../widgets/nummeric_updown.dart';
 
 class RandomNumber extends StatefulWidget {
   const RandomNumber({super.key});
@@ -109,34 +109,28 @@ class _RandomNumberState extends State<RandomNumber> {
         Text(_spinValue),
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Expanded(
-            child: AbsorbPointer(
-              absorbing: _busy,
-              child: FilledButton.tonal(
-                onPressed: spin,
-                child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.casino_outlined),
-                      SizedBox(width: 10),
-                      Text('Spin')
-                    ]),
-              ),
+            child: FilledButton.tonal(
+              onPressed: !_busy ? spin : null,
+              child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.casino_outlined),
+                    SizedBox(width: 10),
+                    Text('Spin')
+                  ]),
             ),
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: AbsorbPointer(
-              absorbing: _busy,
-              child: TextButton(
-                onPressed: generateSeed,
-                child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.text_fields),
-                      SizedBox(width: 10),
-                      Text('Generate Seed')
-                    ]),
-              ),
+            child: TextButton(
+              onPressed: !_busy ? generateSeed : null,
+              child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.text_fields),
+                    SizedBox(width: 10),
+                    Text('Generate Seed')
+                  ]),
             ),
           ),
         ]),

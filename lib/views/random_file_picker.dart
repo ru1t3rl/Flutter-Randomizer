@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
+import '../widgets/file_preview_card.dart';
+
 class RandomFilePicker extends StatefulWidget {
   const RandomFilePicker({super.key});
 
@@ -17,7 +19,8 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
   Random _rnd = Random();
 
   bool _busy = false;
-  bool _change = true;
+  bool _dirty = true;
+  bool _isSpinResult = false;
 
   int randomIndex = 0;
 
@@ -46,6 +49,7 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
     }
 
     directoryTF.text = directoryPath;
+    setState(() => _dirty = true);
   }
 
   Future<void> getAllFiles() async {
@@ -74,16 +78,23 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
           allFiles.where((element) => regex.hasMatch(element.path)).toList();
     }
 
-    setState(() => this.files = allFiles);
+    setState(() {
+      this.files = allFiles;
+      _dirty = false;
+      _isSpinResult = false;
+    });
     _spinValue = 'Got ${this.files.length} files!';
   }
 
   Future<void> spin({int? cycles}) async {
-    setState(() => _busy = true);
+    setState(() {
+      _busy = true;
+      _isSpinResult = false;
+    });
 
     cycles ??= 50;
 
-    if (files.isEmpty || _change) {
+    if (files.isEmpty || _dirty) {
       await getAllFiles();
 
       if (files.isEmpty) {
@@ -102,12 +113,18 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
       await Future.delayed(const Duration(milliseconds: 30));
     }
 
-    setState(() => _busy = false);
+    setState(() {
+      _busy = false;
+      _isSpinResult = true;
+    });
   }
 
   Future<void> generateSeed(
       {int? length, int? smallestCharCode, int? biggestCharCode}) async {
-    setState(() => _busy = true);
+    setState(() {
+      _busy = true;
+      _isSpinResult = false;
+    });
     length ??= 20;
     smallestCharCode ??= 33;
     biggestCharCode ??= 253;
@@ -153,10 +170,12 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                           Expanded(
                             child: TextFormField(
                               controller: directoryTF,
-                              onChanged: (value) => setState(() {
-                                directoryPath = value;
-                                _change = true;
-                              }),
+                              onChanged: !_busy
+                                  ? (value) => setState(() {
+                                        directoryPath = value;
+                                        _dirty = true;
+                                      })
+                                  : null,
                               decoration: const InputDecoration(
                                   border: UnderlineInputBorder(),
                                   hintText: 'Select a directory'),
@@ -164,38 +183,48 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                           ),
                           const SizedBox(width: 50),
                           FilledButton.tonal(
-                              onPressed: setDirectoryPath,
+                              onPressed: !_busy ? setDirectoryPath : null,
                               child: const Text('Browse'))
                         ]),
                     Row(
                       children: [
                         Checkbox(
                             value: getFiles,
-                            onChanged: (value) {
-                              setState(() {
-                                getFiles = value!;
-                              });
-                            }),
+                            onChanged: !_busy
+                                ? (value) {
+                                    setState(() {
+                                      getFiles = value!;
+                                    });
+
+                                    _dirty = true;
+                                  }
+                                : null),
                         const Text('Get Files'),
                         const SizedBox(width: 20),
                         Checkbox(
                             value: getDirectories,
-                            onChanged: (value) {
-                              setState(() {
-                                getDirectories = value!;
-                                _change = true;
-                              });
-                            }),
+                            onChanged: !_busy
+                                ? (value) {
+                                    setState(() {
+                                      getDirectories = value!;
+                                    });
+
+                                    _dirty = true;
+                                  }
+                                : null),
                         const Text('Get Directories'),
                         const SizedBox(width: 20),
                         Checkbox(
                             value: recursive,
-                            onChanged: (value) {
-                              setState(() {
-                                recursive = value!;
-                                _change = true;
-                              });
-                            }),
+                            onChanged: !_busy
+                                ? (value) {
+                                    setState(() {
+                                      recursive = value!;
+                                    });
+
+                                    _dirty = true;
+                                  }
+                                : null),
                         const Text('Recursive'),
                       ],
                     ),
@@ -203,24 +232,26 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                       children: [
                         Checkbox(
                             value: useRegex,
-                            onChanged: (value) {
-                              setState(() {
-                                useRegex = value!;
-                                _change = true;
-                              });
-                            }),
+                            onChanged: !_busy
+                                ? (value) {
+                                    setState(() {
+                                      useRegex = value!;
+                                      _dirty = true;
+                                    });
+                                  }
+                                : null),
                         const Text('Regex'),
                         const SizedBox(width: 20),
                         Expanded(
                           child: TextFormField(
-                            enabled: useRegex,
+                            enabled: useRegex && !_busy,
                             decoration: const InputDecoration(
                                 border: UnderlineInputBorder(),
                                 hintText: 'Regex'),
                             onChanged: (value) {
                               setState(() {
                                 regex = value;
-                                _change = true;
+                                _dirty = true;
                               });
                             },
                           ),
@@ -229,49 +260,41 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                     )
                   ])),
             ),
-            Text(
-              _spinValue,
-              textAlign: TextAlign.center,
-            ),
+            _isSpinResult
+                ? FilePreviewCard(filePath: files[randomIndex].path)
+                : Text(
+                    _spinValue,
+                    key: Key(_spinValue),
+                    textAlign: TextAlign.center,
+                  ),
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(15),
-                child: Column(children: [
-                  FilledButton.tonal(
-                      onPressed: getAllFiles,
-                      child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.file_copy_outlined),
-                            Text('Get Files')
-                          ])),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: FilledButton.tonal(
-                            onPressed: spin,
-                            child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.casino_outlined),
-                                  Text('Spin')
-                                ])),
-                      ),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: FilledButton.tonal(
-                            onPressed: generateSeed,
-                            child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.casino_outlined),
-                                  Text('New Seed')
-                                ])),
-                      ),
-                    ],
-                  )
-                ]),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton.tonal(
+                          onPressed: !_busy ? spin : null,
+                          child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.casino_outlined),
+                                Text('Spin')
+                              ])),
+                    ),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: FilledButton.tonal(
+                          onPressed: !_busy ? generateSeed : null,
+                          child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.casino_outlined),
+                                Text('New Seed')
+                              ])),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

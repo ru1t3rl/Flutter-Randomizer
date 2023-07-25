@@ -1,4 +1,4 @@
-# materialui
+# flutter_randomizer
 
 A new Flutter project.
 

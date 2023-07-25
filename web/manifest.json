@@ -1,6 +1,6 @@
 {
-    "name": "materialui",
-    "short_name": "materialui",
+    "name": "flutter_randomizer",
+    "short_name": "flutter_randomizer",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
