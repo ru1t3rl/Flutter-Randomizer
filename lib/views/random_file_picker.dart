@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_randomizer/widgets/text_checkbox.dart';
+import '../widgets/text_checkbox.dart';
 
 import '../widgets/file_preview_card.dart';
 
@@ -157,7 +157,7 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Card(
-              
+
               child: Padding(
                   padding: const EdgeInsets.all(15),
                   child: Column(children: [
