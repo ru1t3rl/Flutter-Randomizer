@@ -31,7 +31,7 @@ jobs:
           flutter-version: '3.10.6'
 
       - name: Install dependencies
-        run: flutter pub get
+        run: flutter --disable-telementry pub get
 
       - name: Build Windows exe
         run: flutter build windows --release
@@ -44,7 +44,7 @@ jobs:
 
   build_android:
     runs-on: ubuntu-latest
-    needs: [checkout_code, build_windows]
+    needs: [checkout_code]
     steps:
       - name: Cache Flutter dependencies
         uses: actions/cache@v2
@@ -58,7 +58,7 @@ jobs:
           flutter-version: '3.10.6'
 
       - name: Install dependencies
-        run: flutter pub get
+        run: flutter --disable-telementry pub get
 
       - name: Build Android apk
         run: flutter build apk --release
