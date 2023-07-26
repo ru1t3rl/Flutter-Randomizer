@@ -19,8 +19,8 @@ class _RandomNumberState extends State<RandomNumber> {
   String _spinValue = '"Hit Spin"';
   String _seed = "Random Seed";
 
-  int minValue = 0;
-  int maxValue = 0;
+  int minValue = -1;
+  int maxValue = -1;
 
   bool _busy = false;
 
@@ -30,10 +30,17 @@ class _RandomNumberState extends State<RandomNumber> {
 
     _rnd = Random(_seed.hashCode);
 
-    prefs = SharedPreferences.getInstance() as SharedPreferences;
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      initPrefs();
+    });
+  }
 
-    minValue = prefs.getInt('minValue') ?? 0;
-    maxValue = prefs.getInt('maxValue') ?? 0;
+  void initPrefs() async {
+    prefs = await SharedPreferences.getInstance();
+    setState(() {
+      minValue = prefs.getInt('minValue') ?? 0;
+      maxValue = prefs.getInt('maxValue') ?? 0;
+    });
   }
 
   Future<void> spin({int? cycles}) async {
@@ -103,6 +110,7 @@ class _RandomNumberState extends State<RandomNumber> {
                 NummericUpDown(
                     label: 'Min:',
                     maxValue: maxValue,
+                    value: minValue,
                     onChanged: (value) async {
                       setState(() => minValue = value);
                       await prefs.setInt('minValue', value);
@@ -110,6 +118,7 @@ class _RandomNumberState extends State<RandomNumber> {
                 NummericUpDown(
                     label: 'Max:',
                     minValue: minValue,
+                    value: maxValue,
                     onChanged: (value) async {
                       setState(() => maxValue = value);
                       await prefs.setInt('maxvalue', value);

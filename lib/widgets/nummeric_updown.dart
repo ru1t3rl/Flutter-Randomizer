@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 // ignore: must_be_immutable
 class NummericUpDown extends StatefulWidget {
-  int value;
+  int? value;
   late int? minValue;
   late int? maxValue;
   final int step;
@@ -14,7 +14,7 @@ class NummericUpDown extends StatefulWidget {
     Key? key,
     this.minValue,
     this.maxValue,
-    this.value = 0,
+    this.value,
     this.step = 1,
     required this.label,
     required this.onChanged,
@@ -32,11 +32,20 @@ class _NummericUpDownState extends State<NummericUpDown> {
   void initState() {
     super.initState();
     _inputTEC.text = _statefullValue.toString();
+
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      setState(() {
+        _statefullValue = widget.value ?? 0;
+        _inputTEC.text = _statefullValue.toString();
+      });
+    });
   }
 
   Future<void> _updateFromTextFieldValue() async {
     setState(() {
       _statefullValue = int.parse(_inputTEC.text);
+      _statefullValue = _statefullValue.clamp(
+          widget.minValue ?? -9999, widget.maxValue ?? 9999);
       widget.value = _statefullValue;
     });
   }
@@ -46,23 +55,23 @@ class _NummericUpDownState extends State<NummericUpDown> {
       case NummericUpDownUpdateType.up:
         setState(() {
           _statefullValue += widget.step;
-          widget.value = widget.value
-              .clamp(widget.minValue ?? -9999, widget.maxValue ?? 9999);
+          _statefullValue = _statefullValue.clamp(
+              widget.minValue ?? -9999, widget.maxValue ?? 9999);
           widget.value = _statefullValue;
         });
         break;
       case NummericUpDownUpdateType.down:
         setState(() {
           _statefullValue -= widget.step;
-          widget.value = widget.value
-              .clamp(widget.minValue ?? -9999, widget.maxValue ?? 9999);
+          _statefullValue = _statefullValue.clamp(
+              widget.minValue ?? -9999, widget.maxValue ?? 9999);
           widget.value = _statefullValue;
         });
         break;
     }
 
     _inputTEC.text = _statefullValue.toString();
-    await widget.onChanged.call(widget.value);
+    await widget.onChanged.call(widget.value!);
   }
 
   @override
