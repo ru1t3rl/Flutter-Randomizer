@@ -31,7 +31,7 @@ jobs:
           flutter-version: '3.10.6'
 
       - name: Install dependencies
-        run: flutter --disable-telementry pub get
+        run: flutter --disable-telemetry pub get
 
       - name: Build Windows exe
         run: flutter build windows --release
@@ -58,7 +58,7 @@ jobs:
           flutter-version: '3.10.6'
 
       - name: Install dependencies
-        run: flutter --disable-telementry pub get
+        run: flutter --disable-telemetry pub get
 
       - name: Build Android apk
         run: flutter build apk --release
