@@ -37,6 +37,7 @@ dependencies:
   file_picker: 5.3.1
   flutter_meedu_videoplayer: ^4.2.20
   open_app_file: ^4.0.2
+  shared_preferences: ^2.2.0
 
 dev_dependencies:
   flutter_test:

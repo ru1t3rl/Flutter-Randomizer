@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/nummeric_updown.dart';
 
 class RandomNumber extends StatefulWidget {
@@ -11,6 +12,8 @@ class RandomNumber extends StatefulWidget {
 }
 
 class _RandomNumberState extends State<RandomNumber> {
+  late final SharedPreferences prefs;
+
   Random _rnd = Random();
 
   String _spinValue = '"Hit Spin"';
@@ -26,6 +29,11 @@ class _RandomNumberState extends State<RandomNumber> {
     super.initState();
 
     _rnd = Random(_seed.hashCode);
+
+    prefs = SharedPreferences.getInstance() as SharedPreferences;
+
+    minValue = prefs.getInt('minValue') ?? 0;
+    maxValue = prefs.getInt('maxValue') ?? 0;
   }
 
   Future<void> spin({int? cycles}) async {
@@ -97,12 +105,14 @@ class _RandomNumberState extends State<RandomNumber> {
                     maxValue: maxValue,
                     onChanged: (value) async {
                       setState(() => minValue = value);
+                      await prefs.setInt('minValue', value);
                     }),
                 NummericUpDown(
                     label: 'Max:',
                     minValue: minValue,
                     onChanged: (value) async {
                       setState(() => maxValue = value);
+                      await prefs.setInt('maxvalue', value);
                     }),
               ]),
         )),
