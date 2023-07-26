@@ -14,7 +14,7 @@ jobs:
       - uses: little-core-labs/get-git-tag@v3.0.1
         id: tagName
         with:
-          tagRegex: "[a-z][0-9]+.[0-9]+.[1-9][0-9]*"  # Optional. Returns specified group text as tag name. Full tag string is returned if regex is not defined.
+          tagRegex: "a*.*.*"  # Optional. Returns specified group text as tag name. Full tag string is returned if regex is not defined.
           tagRegexGroup: 1 # Optional. Default is 1.
 
   build_windows:
@@ -95,10 +95,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.tagName.outputs.tag }}
-          release_name: Release ${{ steps.tagName.outputs.tag }}
+          tag_name: $GIT_TAG_NAME
+          release_name: Release $GIT_TAG_NAME
           body: |
-            These are the release notes for ${{ steps.tagName.outputs.tag }}.
+            These are the release notes for $GIT_TAG_NAME.
             Changelog:
               ${{ steps.commit_messages.outputs.messages }}
           draft: false
