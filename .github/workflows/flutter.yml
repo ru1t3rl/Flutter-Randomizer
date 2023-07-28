@@ -22,7 +22,7 @@ jobs:
       - name: Setup flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.10.6'
+          flutter-version: "3.10.6"
           cache: true
 
       - name: Install dependencies
@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Cache Flutter dependencies
         uses: actions/cache@v2
         with:
@@ -51,7 +51,7 @@ jobs:
       - name: Setup flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.10.6'
+          flutter-version: "3.10.6"
           cache: true
 
       - name: Install dependencies
@@ -66,13 +66,13 @@ jobs:
           name: Apk Build
           path: ./build/app/outputs/apk/release/app-release.apk
 
-      - name: Build Android apk
+      - name: Build Android appbundle
         run: flutter build appbundle --release
 
       - name: Upload the appbunlde build artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: Apk Build
+          name: Appbundle Build
           path: ./build/app/outputs/bundle/release/app-release.aab
 
   create_release:
@@ -97,12 +97,24 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Download Assets
+      - name: Download Windows
         uses: actions/download-artifact@v3
         with:
-          name: Release Assets
+          name: Windows Build
           path: ${{ github.workspace }}/release-assets
-        
+
+      - name: Download Apk
+        uses: actions/download-artifact@v3
+        with:
+          name: Apk Build
+          path: ${{ github.workspace }}/release-assets
+
+      - name: Download Appbundle
+        uses: actions/download-artifact@v3
+        with:
+          name: Appbundle Build
+          path: ${{ github.workspace }}/release-assets
+
       - name: Upload Release Assets
         id: upload_release_assets
         uses: actions/upload-release-asset@v1
