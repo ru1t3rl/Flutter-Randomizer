@@ -88,10 +88,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "$GIT_TAG_NAME"
-          release_name: "Release $GIT_TAG_NAME"
+          tag_name: ${{ env.GIT_TAG_NAME }}
+          release_name: Release ${{ env.GIT_TAG_NAME }}
           body: |
-            These are the release notes for "$GIT_TAG_NAME".
+            These are the release notes for ${{ env.GIT_TAG_NAME}}.
             Changelog:
               ${{ steps.commit_messages.outputs.messages }}
           draft: false
