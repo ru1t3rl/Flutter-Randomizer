@@ -98,7 +98,7 @@ jobs:
           prerelease: false
 
       - name: Download Assets
-        uses: actions/download-artifact@v3.1.2
+        uses: actions/download-artifact@v3
         with:
           name: Release Assets
           path: ${{ github.workspace }}/release-assets
