@@ -138,7 +138,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ env.UPLOAD_URL }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ github.workspace }}/release-assets/app-release.apk
           asset_name: app-release.apk
           asset_content_type: application/vnd.android.package-archive
@@ -159,7 +159,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ env.UPLOAD_URL }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ github.workspace }}/release-assets/app-release.aab
           asset_name: app-release.aab
           asset_content_type: application/vnd.android.package-archive
