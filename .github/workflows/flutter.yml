@@ -122,10 +122,10 @@ jobs:
           asset_name: flutter_randomizer.exe
           asset_content_type: application/octet-stream
 
-  upload_apk:
-    runs-on: ubuntu-latest
-    needs: create_release
-    steps:
+  # upload_apk:
+  #   runs-on: ubuntu-latest
+  #   needs: create_release
+  #   steps:
       - name: Download Apk
         uses: actions/download-artifact@v3
         with:
@@ -143,10 +143,10 @@ jobs:
           asset_name: app-release.apk
           asset_content_type: application/vnd.android.package-archive
 
-  upload_appbundle:
-    runs-on: ubuntu-latest
-    needs: create_release
-    steps:
+  # upload_appbundle:
+  #   runs-on: ubuntu-latest
+  #   needs: create_release
+  #   steps:
       - name: Download Appbundle
         uses: actions/download-artifact@v3
         with:
