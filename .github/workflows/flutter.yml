@@ -94,10 +94,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: $GIT_TAG_NAME
-          release_name: Release $GIT_TAG_NAME
+          tag_name: ${{ GIT_TAG_NAME }}
+          release_name: Release ${{ GIT_TAG_NAME }}
           body: |
-            These are the release notes for $GIT_TAG_NAME.
+            These are the release notes for ${{ GIT_TAG_NAME }}.
             Changelog:
               ${{ steps.commit_messages.outputs.messages }}
           draft: false
@@ -111,14 +111,14 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: |
-            ./build/app/outputs/flutter-apk/release/app-release.apk
+            ./build/app/outputs/apk/release/app-release.apk
             ./build/app/outputs/bundle/release/app-release.aab
             ./build/windows/runner/Release/flutter_randomizer.exe
           asset_name: |
             app-release.apk
-            app-release.abb
+            app-release.aab
             flutter_randomizer.exe
           asset_content_type: |
-            application/apk
-            applicaton/abb
-            application/exe
+            application/vnd.android.package-archive
+            application/vnd.android.package-archive
+            application/octet-stream
