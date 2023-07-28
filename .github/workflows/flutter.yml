@@ -8,14 +8,6 @@ on:
       - "v*.*.*"
 
 jobs:
-  get_tag:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: little-core-labs/get-git-tag@v3.0.1
-        id: tagName
-        with:
-          tagRegexGroup: 1 # Optional. Default is 1.
-
   build_windows:
     runs-on: windows-latest
     steps:
@@ -88,16 +80,18 @@ jobs:
     runs-on: ubuntu-latest
     needs: [get_tag, build_windows, build_android]
     steps:
+      - uses: little-core-labs/get-git-tag@v3.0.1
+        id: tagName
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ GIT_TAG_NAME }}
-          release_name: Release ${{ GIT_TAG_NAME }}
+          tag_name: $GIT_TAG_NAME
+          release_name: Release $GIT_TAG_NAME
           body: |
-            These are the release notes for ${{ GIT_TAG_NAME }}.
+            These are the release notes for $GIT_TAG_NAME.
             Changelog:
               ${{ steps.commit_messages.outputs.messages }}
           draft: false
