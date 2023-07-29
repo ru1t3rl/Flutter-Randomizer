@@ -87,6 +87,7 @@ jobs:
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UPLOAD_URL: ${{ env.UPLOAD_URL }}
         with:
           tag_name: ${{ env.GIT_TAG_NAME }}
           release_name: Release ${{ env.GIT_TAG_NAME }}
@@ -96,9 +97,6 @@ jobs:
               ${{ steps.commit_messages.outputs.messages }}
           draft: false
           prerelease: false
-      - run: |
-         export UPLOAD_URL=${{steps.create_release.outputs.upload_url}}
-         echo "::set-env name=UPLOAD_URL::${{ steps.create_release.outputs.upload_url }}"
 
   upload_windows_assets:
       runs-on: ubuntu-latest
