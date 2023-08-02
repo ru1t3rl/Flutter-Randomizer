@@ -96,8 +96,8 @@ jobs:
               ${{ steps.commit_messages.outputs.messages }}
           draft: false
           prerelease: false
-        output:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+    output:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
 
   upload_windows_assets:
       runs-on: ubuntu-latest
