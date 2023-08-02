@@ -96,7 +96,7 @@ jobs:
               ${{ steps.commit_messages.outputs.messages }}
           draft: false
           prerelease: false
-    output:
+    outputs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
 
   upload_windows_assets:
