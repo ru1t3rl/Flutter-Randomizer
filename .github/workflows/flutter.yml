@@ -115,9 +115,10 @@ jobs:
         id: upload_release_assets_windows        
         uses: actions/upload-release-asset@v1
         env:
+          UPLOAD_URL: ${{ needs.create_release.output.upload_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create_release.output.upload_url }}
+          upload_url: $UPLOAD_URL
           asset_path: ${{ github.workspace }}/release-assets/flutter_randomizer.exe
           asset_name: flutter_randomizer.exe
           asset_content_type: application/octet-stream
@@ -136,9 +137,10 @@ jobs:
         id: upload_release_assets_apk
         uses: actions/upload-release-asset@v1
         env:
+          UPLOAD_URL: ${{ needs.create_release.output.upload_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create_release.output.upload_url }}
+          upload_url: $UPLOAD_URL
           asset_path: ${{ github.workspace }}/release-assets/app-release.apk
           asset_name: app-release.apk
           asset_content_type: application/vnd.android.package-archive
@@ -157,9 +159,10 @@ jobs:
         id: upload_release_assets_appbundle
         uses: actions/upload-release-asset@v1
         env:
+          UPLOAD_URL: ${{ needs.create_release.output.upload_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create_release.output.upload_url }}
+          upload_url: $UPLOAD_URL
           asset_path: ${{ github.workspace }}/release-assets/app-release.aab
           asset_name: app-release.aab
           asset_content_type: application/vnd.android.package-archive
