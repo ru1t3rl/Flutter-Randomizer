@@ -108,9 +108,11 @@ jobs:
         with:
           name: Windows Build
           path: ${{ github.workspace }}/release-assets
+      - name: Echo upload_url
+        run: echo ${{ needs.create_release.output.upload_url }}
 
       - name: Upload Release Assets
-        id: upload_release_assets_windows
+        id: upload_release_assets_windows        
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
