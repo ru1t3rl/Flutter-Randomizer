@@ -26,23 +26,34 @@ class _FilePreviewCardState extends State<FilePreviewCard> {
     initialFit: BoxFit.contain,
   );
 
-  late final String _fileName;
-  late final File _file;
-  late final String _type;
-  late final bool _isFolder;
+  late String _fileName;
+  late File _file;
+  late String _type;
+  late bool _isFolder;
 
   @override
   void initState() {
     super.initState();
     _file = File(widget.filePath);
     _fileName = widget.filePath.split(Platform.pathSeparator).last;
-
     _type = widget.filePath.split('.').last;
     _isFolder = _file.statSync().type == FileSystemEntityType.directory;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _init();
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant FilePreviewCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.filePath != widget.filePath) {
+      _file = File(widget.filePath);
+      _fileName = widget.filePath.split(Platform.pathSeparator).last;
+      _type = widget.filePath.split('.').last;
+      _isFolder = _file.statSync().type == FileSystemEntityType.directory;
+      _init();
+    }
   }
 
   _init() {

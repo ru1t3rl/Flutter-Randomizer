@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:randomizer/widgets/file_history_card.dart';
 import '../widgets/text_checkbox.dart';
 
 import '../widgets/file_preview_card.dart';
@@ -17,11 +18,13 @@ class RandomFilePicker extends StatefulWidget {
 class _RandomFilePickerState extends State<RandomFilePicker> {
   var directoryTF = TextEditingController();
   List<FileSystemEntity> files = [];
+  final List<FileSystemEntity> _filesHistory = [];
   Random _rnd = Random();
 
   bool _busy = false;
   bool _dirty = true;
   bool _isSpinResult = false;
+  bool _useHistory = false;
 
   int randomIndex = 0;
 
@@ -87,10 +90,18 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
     _spinValue = 'Got ${this.files.length} files!';
   }
 
+  Future<void> onHistoryItemClicked(FileSystemEntity file) async {   
+    setState(() {
+      randomIndex = _filesHistory.indexOf(file);
+      _useHistory = true;
+    });
+  }
+
   Future<void> spin({int? cycles}) async {
     setState(() {
       _busy = true;
       _isSpinResult = false;
+      _useHistory = false;
     });
 
     cycles ??= 50;
@@ -114,6 +125,8 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
       await Future.delayed(const Duration(milliseconds: 30));
     }
 
+    _filesHistory.add(files[randomIndex]);
+
     setState(() {
       _busy = false;
       _isSpinResult = true;
@@ -125,6 +138,7 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
     setState(() {
       _busy = true;
       _isSpinResult = false;
+      _useHistory = false;
     });
     length ??= 20;
     smallestCharCode ??= 33;
@@ -152,153 +166,170 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Card(
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Card(
+                  child: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Column(children: [
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text('Path:',
+                                  textScaleFactor: 1.25,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              const SizedBox(width: 20),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: directoryTF,
+                                  onChanged: !_busy
+                                      ? (value) => setState(() {
+                                            directoryPath = value;
+                                            _dirty = true;
+                                          })
+                                      : null,
+                                  decoration: const InputDecoration(
+                                      border: UnderlineInputBorder(),
+                                      hintText: 'Select a directory'),
+                                ),
+                              ),
+                              const SizedBox(width: 50),
+                              FilledButton.tonal(
+                                  onPressed: !_busy ? setDirectoryPath : null,
+                                  child: const Text('Browse'))
+                            ]),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Wrap(
+                            alignment: WrapAlignment.start,
+                            crossAxisAlignment: WrapCrossAlignment.start,
+                            children: [
+                              TextCheckbox(
+                                  label: 'Get Files',
+                                  value: getFiles,
+                                  onChanged: !_busy
+                                      ? (value) {
+                                          setState(() {
+                                            getFiles = value!;
+                                          });
 
-              child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Column(children: [
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Text('Path:',
-                              textScaleFactor: 1.25,
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: TextFormField(
-                              controller: directoryTF,
-                              onChanged: !_busy
-                                  ? (value) => setState(() {
-                                        directoryPath = value;
-                                        _dirty = true;
-                                      })
-                                  : null,
-                              decoration: const InputDecoration(
-                                  border: UnderlineInputBorder(),
-                                  hintText: 'Select a directory'),
-                            ),
-                          ),
-                          const SizedBox(width: 50),
-                          FilledButton.tonal(
-                              onPressed: !_busy ? setDirectoryPath : null,
-                              child: const Text('Browse'))
-                        ]),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Wrap(
-                        alignment: WrapAlignment.start,
-                        crossAxisAlignment: WrapCrossAlignment.start,
-                        children: [
-                          TextCheckbox(
-                              label: 'Get Files',
-                              value: getFiles,
-                              onChanged: !_busy
-                                  ? (value) {
-                                      setState(() {
-                                        getFiles = value!;
-                                      });
+                                          _dirty = true;
+                                        }
+                                      : null),
+                              TextCheckbox(
+                                  label: 'Get Directories',
+                                  value: getDirectories,
+                                  onChanged: !_busy
+                                      ? (value) {
+                                          setState(() {
+                                            getDirectories = value!;
+                                          });
 
-                                      _dirty = true;
-                                    }
-                                  : null),
-                          TextCheckbox(
-                              label: 'Get Directories',
-                              value: getDirectories,
-                              onChanged: !_busy
-                                  ? (value) {
-                                      setState(() {
-                                        getDirectories = value!;
-                                      });
+                                          _dirty = true;
+                                        }
+                                      : null),
+                              TextCheckbox(
+                                  label: 'Recursive',
+                                  value: recursive,
+                                  onChanged: !_busy
+                                      ? (value) {
+                                          setState(() {
+                                            recursive = value!;
+                                          });
 
-                                      _dirty = true;
-                                    }
-                                  : null),
-                          TextCheckbox(
-                              label: 'Recursive',
-                              value: recursive,
-                              onChanged: !_busy
-                                  ? (value) {
-                                      setState(() {
-                                        recursive = value!;
-                                      });
-
-                                      _dirty = true;
-                                    }
-                                  : null),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        TextCheckbox(
-                            label: 'Use Regex',
-                            value: useRegex,
-                            onChanged: !_busy
-                                ? (value) {
-                                    setState(() {
-                                      useRegex = value!;
-                                      _dirty = true;
-                                    });
-                                  }
-                                : null),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: TextFormField(
-                            enabled: useRegex && !_busy,
-                            decoration: const InputDecoration(
-                                border: UnderlineInputBorder(),
-                                hintText: 'Regex'),
-                            onChanged: (value) {
-                              setState(() {
-                                regex = value;
-                                _dirty = true;
-                              });
-                            },
+                                          _dirty = true;
+                                        }
+                                      : null),
+                            ],
                           ),
                         ),
+                        Row(
+                          children: [
+                            TextCheckbox(
+                                label: 'Use Regex',
+                                value: useRegex,
+                                onChanged: !_busy
+                                    ? (value) {
+                                        setState(() {
+                                          useRegex = value!;
+                                          _dirty = true;
+                                        });
+                                      }
+                                    : null),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: TextFormField(
+                                enabled: useRegex && !_busy,
+                                decoration: const InputDecoration(
+                                    border: UnderlineInputBorder(),
+                                    hintText: 'Regex'),
+                                onChanged: (value) {
+                                  setState(() {
+                                    regex = value;
+                                    _dirty = true;
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        )
+                      ])),
+                ),
+                _isSpinResult
+                    ? FilePreviewCard(filePath: (_useHistory ? _filesHistory : files)[randomIndex].path)
+                    : Text(
+                        _spinValue,
+                        key: Key(_spinValue),
+                        textAlign: TextAlign.center,
+                      ),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: FilledButton.tonal(
+                              onPressed: !_busy ? spin : null,
+                              child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.casino_outlined),
+                                    Text('Spin')
+                                  ])),
+                        ),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: FilledButton.tonal(
+                              onPressed: !_busy ? generateSeed : null,
+                              child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.casino_outlined),
+                                    Text('New Seed')
+                                  ])),
+                        ),
                       ],
-                    )
-                  ])),
-            ),
-            _isSpinResult
-                ? FilePreviewCard(filePath: files[randomIndex].path)
-                : Text(
-                    _spinValue,
-                    key: Key(_spinValue),
-                    textAlign: TextAlign.center,
+                    ),
                   ),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: FilledButton.tonal(
-                          onPressed: !_busy ? spin : null,
-                          child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.casino_outlined),
-                                Text('Spin')
-                              ])),
-                    ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      child: FilledButton.tonal(
-                          onPressed: !_busy ? generateSeed : null,
-                          child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.casino_outlined),
-                                Text('New Seed')
-                              ])),
-                    ),
-                  ],
+                ),
+              ],
+            ),
+            Positioned(
+              top: 195,
+              bottom: 100,
+              left: 0,
+              child: SizedBox(
+                width: 400 * MediaQuery.of(context).size.width / 1600,
+                height: 200 * MediaQuery.of(context).size.width / 900,
+                child: FileHistoryCard(
+                  files: _filesHistory,
+                  onTapItem: onHistoryItemClicked,
                 ),
               ),
             ),
