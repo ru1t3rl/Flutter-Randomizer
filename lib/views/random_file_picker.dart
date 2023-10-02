@@ -75,7 +75,7 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
     if (result == null || result == directoryPath) {
       return;
     }
-    
+
     setState(() => directoryPath = result);
     directoryTF.text = directoryPath;
     prefs.setString('directoryPath', directoryPath);
@@ -232,18 +232,34 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                                         TextStyle(fontWeight: FontWeight.bold)),
                                 const SizedBox(width: 20),
                                 Expanded(
-                                  child: TextFormField(
-                                    controller: directoryTF,
-                                    onChanged: !_busy
-                                        ? (value) => setState(() {
-                                              directoryPath = value;
-                                              _dirty = true;
-                                            })
-                                        : null,
-                                    decoration: const InputDecoration(
-                                        isDense: true,
-                                        border: UnderlineInputBorder(),
-                                        hintText: 'Select a directory'),
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                    elevation: 1,
+                                    shadowColor: Colors.transparent,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .background,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 12,
+                                        right: 12,
+                                      ),
+                                      child: TextFormField(
+                                        controller: directoryTF,
+                                        onChanged: !_busy
+                                            ? (value) => setState(() {
+                                                  directoryPath = value;
+                                                  _dirty = true;
+                                                })
+                                            : null,
+                                        decoration: const InputDecoration(
+                                            isDense: true,
+                                            border: InputBorder.none,
+                                            hintText: 'Select a directory'),
+                                      ),
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: 50),
@@ -319,21 +335,36 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.only(right: 153),
-                                child: TextFormField(
-                                  enabled: useRegex && !_busy,
-                                  controller: regexTF,
-                                  decoration: const InputDecoration(
-                                      isDense: true,
-                                      border: UnderlineInputBorder(),
-                                      hintText: 'Regex'),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      regex = value;
-                                      _dirty = true;
-                                    });
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  elevation: 1,
+                                  shadowColor: Colors.transparent,
+                                  color:
+                                      Theme.of(context).colorScheme.background,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 12,
+                                      right: 12,
+                                    ),
+                                    child: TextFormField(
+                                      enabled: useRegex && !_busy,
+                                      controller: regexTF,
+                                      decoration: const InputDecoration(
+                                          isDense: true,
+                                          border: InputBorder.none,
+                                          hintText: 'Regex'),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          regex = value;
+                                          _dirty = true;
+                                        });
 
-                                    prefs.setString('regex', value);
-                                  },
+                                        prefs.setString('regex', value);
+                                      },
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
