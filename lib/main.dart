@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_meedu_videoplayer/meedu_player.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:media_kit/media_kit.dart';
 
 import '../views/home.dart';
 import '../views/random_file_picker.dart';
 import '../views/random_number.dart';
 
 void main() {
-  initMeeduPlayer(); //androidUseMediaKit: true);
+  MediaKit.ensureInitialized();
   runApp(const MyApp());
 }
 
