@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_meedu_videoplayer/meedu_player.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../views/home.dart';
 import '../views/random_file_picker.dart';
 import '../views/random_number.dart';
 
 void main() {
-  initMeeduPlayer();//androidUseMediaKit: true);
+  initMeeduPlayer(); //androidUseMediaKit: true);
   runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+
   const MyApp({super.key});
 
   @override
@@ -26,7 +28,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Randomizer',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
         useMaterial3: true,
       ),
       home: Scaffold(

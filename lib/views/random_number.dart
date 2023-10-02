@@ -30,7 +30,7 @@ class _RandomNumberState extends State<RandomNumber> {
 
     _rnd = Random(_seed.hashCode);
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       initPrefs();
     });
   }

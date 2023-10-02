@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_meedu_videoplayer/meedu_player.dart';
@@ -7,8 +8,9 @@ import 'package:open_app_file/open_app_file.dart';
 class FilePreviewCard extends StatefulWidget {
   final String filePath;
   final Future<void> Function()? onTap;
+  final bool useHoverPreview;
 
-  const FilePreviewCard({super.key, required this.filePath, this.onTap});
+  const FilePreviewCard({super.key, required this.filePath, this.onTap, this.useHoverPreview = false});
 
   @override
   State<FilePreviewCard> createState() => _FilePreviewCardState();
@@ -59,7 +61,6 @@ class _FilePreviewCardState extends State<FilePreviewCard> {
   _init() {
     if (_type == 'mp4') {
       _controller.setVolume(0);
-      _controller.setPlaybackSpeed(0.01);
       _controller.setDataSource(
         DataSource(
           type: DataSourceType.file,
@@ -67,6 +68,16 @@ class _FilePreviewCardState extends State<FilePreviewCard> {
         ),
         autoplay: false,
       );
+
+      _controller.onDurationChanged.listen((duration) {
+        _controller.seekTo(
+          Duration(
+            seconds: 5 +
+                Random().nextInt(
+                    (_controller.duration.value.inSeconds * .75).floor()),
+          ),
+        );
+      });
 
       _fullscreenController.setDataSource(
         DataSource(

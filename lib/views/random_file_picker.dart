@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:randomizer/widgets/file_history_card.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/text_checkbox.dart';
 
 import '../widgets/file_preview_card.dart';
@@ -16,6 +17,8 @@ class RandomFilePicker extends StatefulWidget {
 }
 
 class _RandomFilePickerState extends State<RandomFilePicker> {
+  late final SharedPreferences prefs;
+
   var directoryTF = TextEditingController();
   List<FileSystemEntity> files = [];
   final List<FileSystemEntity> _filesHistory = [];
@@ -41,7 +44,25 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _init();
+    });
+
     directoryTF.text = directoryPath;
+  }
+
+  void _init() async {
+    prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      directoryPath = prefs.getString('directoryPath') ?? directoryPath;
+      getFiles = prefs.getBool('getFiles') ?? getFiles;
+      getDirectories = prefs.getBool('getDirectories') ?? getDirectories;
+      recursive = prefs.getBool('recursive') ?? recursive;
+      useRegex = prefs.getBool('useRegex') ?? useRegex;
+      regex = prefs.getString('regex') ?? regex;
+    });
   }
 
   Future<void> setDirectoryPath() async {
@@ -53,6 +74,7 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
     }
 
     directoryTF.text = directoryPath;
+    prefs.setString('directoryPath', directoryPath);
     setState(() => _dirty = true);
   }
 
@@ -63,17 +85,31 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
     List<FileSystemEntity> directories = [];
 
     if (getFiles) {
-      files = Directory(directoryPath)
-          .listSync(recursive: recursive)
-          .whereType<File>()
-          .toList();
+      try {
+        files = Directory(directoryPath)
+            .listSync(recursive: recursive)
+            .whereType<File>()
+            .toList();
+      } on PathNotFoundException {
+        setState(() {
+          _spinValue = 'Invalid directory!';
+        });
+        return;
+      }
     }
 
     if (getDirectories) {
-      directories = Directory(directoryPath)
-          .listSync(recursive: recursive)
-          .whereType<Directory>()
-          .toList();
+      try {
+        directories = Directory(directoryPath)
+            .listSync(recursive: recursive)
+            .whereType<Directory>()
+            .toList();
+      } on PathNotFoundException {
+        setState(() {
+          _spinValue = 'Invalid directory!';
+        });
+        return;
+      }
     }
 
     List<FileSystemEntity> allFiles = [...files, ...directories];
@@ -90,7 +126,7 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
     _spinValue = 'Got ${this.files.length} files!';
   }
 
-  Future<void> onHistoryItemClicked(FileSystemEntity file) async {   
+  Future<void> onHistoryItemClicked(FileSystemEntity file) async {
     setState(() {
       randomIndex = _filesHistory.indexOf(file);
       _useHistory = true;
@@ -173,6 +209,10 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Card(
+                  color: Theme.of(context).colorScheme.background,
+                  surfaceTintColor:
+                      Theme.of(context).colorScheme.tertiaryContainer,
+                  elevation: 4,
                   child: Padding(
                       padding: const EdgeInsets.all(15),
                       child: Column(children: [
@@ -219,6 +259,7 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                                             getFiles = value!;
                                           });
 
+                                          prefs.setBool('getFiles', value!);
                                           _dirty = true;
                                         }
                                       : null),
@@ -231,6 +272,8 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                                             getDirectories = value!;
                                           });
 
+                                          prefs.setBool(
+                                              'getDirectories', value!);
                                           _dirty = true;
                                         }
                                       : null),
@@ -243,6 +286,7 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                                             recursive = value!;
                                           });
 
+                                          prefs.setBool('recursive', value!);
                                           _dirty = true;
                                         }
                                       : null),
@@ -260,6 +304,7 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                                           useRegex = value!;
                                           _dirty = true;
                                         });
+                                        prefs.setBool('useRegex', value!);
                                       }
                                     : null),
                             const SizedBox(width: 20),
@@ -274,6 +319,8 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                                     regex = value;
                                     _dirty = true;
                                   });
+
+                                  prefs.setString('regex', value);
                                 },
                               ),
                             ),
@@ -282,7 +329,10 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                       ])),
                 ),
                 _isSpinResult
-                    ? FilePreviewCard(filePath: (_useHistory ? _filesHistory : files)[randomIndex].path)
+                    ? FilePreviewCard(
+                        filePath:
+                            (_useHistory ? _filesHistory : files)[randomIndex]
+                                .path)
                     : Text(
                         _spinValue,
                         key: Key(_spinValue),
@@ -330,6 +380,13 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                 child: FileHistoryCard(
                   files: _filesHistory,
                   onTapItem: onHistoryItemClicked,
+                  onTapClear: () async => setState(() {
+                    _useHistory = false;
+                    _isSpinResult = false;
+                    _spinValue =
+                        'There are ${files.length} files!\nHit spin again to get a new file!';
+                    _filesHistory.clear();
+                  }),
                 ),
               ),
             ),

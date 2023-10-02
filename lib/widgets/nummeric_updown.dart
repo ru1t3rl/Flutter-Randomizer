@@ -33,7 +33,7 @@ class _NummericUpDownState extends State<NummericUpDown> {
     super.initState();
     _inputTEC.text = _statefullValue.toString();
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         _statefullValue = widget.value ?? 0;
         _inputTEC.text = _statefullValue.toString();
