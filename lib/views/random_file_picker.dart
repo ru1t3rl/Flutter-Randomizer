@@ -72,10 +72,11 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
     String? result = await FilePicker.platform.getDirectoryPath(
         dialogTitle: 'Select a directory', lockParentWindow: true);
 
-    if (result != null) {
-      setState(() => directoryPath = result);
+    if (result == null || result == directoryPath) {
+      return;
     }
-
+    
+    setState(() => directoryPath = result);
     directoryTF.text = directoryPath;
     prefs.setString('directoryPath', directoryPath);
     setState(() => _dirty = true);
@@ -219,34 +220,38 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                   child: Padding(
                       padding: const EdgeInsets.all(15),
                       child: Column(children: [
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Text('Path:',
-                                  textScaleFactor: 1.25,
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              const SizedBox(width: 20),
-                              Expanded(
-                                child: TextFormField(
-                                  controller: directoryTF,
-                                  onChanged: !_busy
-                                      ? (value) => setState(() {
-                                            directoryPath = value;
-                                            _dirty = true;
-                                          })
-                                      : null,
-                                  decoration: const InputDecoration(
-                                      border: UnderlineInputBorder(),
-                                      hintText: 'Select a directory'),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 6, right: 8),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text('Path:',
+                                    textScaleFactor: 1.25,
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                const SizedBox(width: 20),
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: directoryTF,
+                                    onChanged: !_busy
+                                        ? (value) => setState(() {
+                                              directoryPath = value;
+                                              _dirty = true;
+                                            })
+                                        : null,
+                                    decoration: const InputDecoration(
+                                        isDense: true,
+                                        border: UnderlineInputBorder(),
+                                        hintText: 'Select a directory'),
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 50),
-                              FilledButton.tonal(
-                                  onPressed: !_busy ? setDirectoryPath : null,
-                                  child: const Text('Browse'))
-                            ]),
+                                const SizedBox(width: 50),
+                                FilledButton.tonal(
+                                    onPressed: !_busy ? setDirectoryPath : null,
+                                    child: const Text('Browse'))
+                              ]),
+                        ),
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Wrap(
@@ -312,20 +317,24 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                                     : null),
                             const SizedBox(width: 20),
                             Expanded(
-                              child: TextFormField(
-                                enabled: useRegex && !_busy,
-                                controller: regexTF,
-                                decoration: const InputDecoration(
-                                    border: UnderlineInputBorder(),
-                                    hintText: 'Regex'),
-                                onChanged: (value) {
-                                  setState(() {
-                                    regex = value;
-                                    _dirty = true;
-                                  });
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 153),
+                                child: TextFormField(
+                                  enabled: useRegex && !_busy,
+                                  controller: regexTF,
+                                  decoration: const InputDecoration(
+                                      isDense: true,
+                                      border: UnderlineInputBorder(),
+                                      hintText: 'Regex'),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      regex = value;
+                                      _dirty = true;
+                                    });
 
-                                  prefs.setString('regex', value);
-                                },
+                                    prefs.setString('regex', value);
+                                  },
+                                ),
                               ),
                             ),
                           ],
