@@ -33,6 +33,7 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
 
   String directoryPath = '';
   String regex = '';
+  var regexTF = TextEditingController();
   String _seed = 'Random Seed';
   String _spinValue = '"Hit Spin"';
 
@@ -48,8 +49,6 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _init();
     });
-
-    directoryTF.text = directoryPath;
   }
 
   void _init() async {
@@ -57,11 +56,15 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
 
     setState(() {
       directoryPath = prefs.getString('directoryPath') ?? directoryPath;
+      directoryTF.text = directoryPath;
+
       getFiles = prefs.getBool('getFiles') ?? getFiles;
       getDirectories = prefs.getBool('getDirectories') ?? getDirectories;
       recursive = prefs.getBool('recursive') ?? recursive;
+
       useRegex = prefs.getBool('useRegex') ?? useRegex;
       regex = prefs.getString('regex') ?? regex;
+      regexTF.text = regex;
     });
   }
 
@@ -311,6 +314,7 @@ class _RandomFilePickerState extends State<RandomFilePicker> {
                             Expanded(
                               child: TextFormField(
                                 enabled: useRegex && !_busy,
+                                controller: regexTF,
                                 decoration: const InputDecoration(
                                     border: UnderlineInputBorder(),
                                     hintText: 'Regex'),
