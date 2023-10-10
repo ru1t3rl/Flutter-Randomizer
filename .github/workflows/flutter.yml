@@ -98,6 +98,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           path: ${{ github.workspace }}/release-assets
+
+      - name: Check files
+        run: ls ${{ github.workspace }}/release-assets/
       
       - name: Create Release
         uses: softprops/action-gh-release@v1
