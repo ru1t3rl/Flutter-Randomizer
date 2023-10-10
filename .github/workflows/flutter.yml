@@ -30,12 +30,12 @@ jobs:
 
       - name: Build Windows exe
         run: flutter build windows --release
-
+        
       - name: Upload the build artifact
         uses: actions/upload-artifact@v3.1.2
         with:
           name: Windows Build
-          path: ./build/windows/runner/Release/flutter_randomizer.exe
+          path: ./build/windows/runner/Release
 
   build_android:
     runs-on: ubuntu-latest
