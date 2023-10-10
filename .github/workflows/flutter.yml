@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Cache Flutter dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.pub-cache
           key: ${{ runner.os }}-pub-cache-${{ hashFiles('**/pubspec.lock') }}
@@ -34,7 +34,7 @@ jobs:
       - name: Upload the build artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: Windows Build
+          name: flutter_randomizer_windows.zip
           path: ./build/windows/runner/Release
 
   build_android:
@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Cache Flutter dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.pub-cache
           key: ${{ runner.os }}-pub-cache-${{ hashFiles('**/pubspec.lock') }}
@@ -63,7 +63,7 @@ jobs:
       - name: Upload the apk build artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: Apk Build
+          name: flutter_randomizer.apk
           path: ./build/app/outputs/apk/release/app-release.apk
 
       - name: Build Android appbundle
@@ -72,14 +72,17 @@ jobs:
       - name: Upload the appbunlde build artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: Appbundle Build
+          name: flutter_randomizer.aab
           path: ./build/app/outputs/bundle/release/app-release.aab
 
   create_release_new:
     runs-on: ubuntu-latest
     needs: [build_windows, build_android]
-    steps:
-      - uses: little-core-labs/get-git-tag@v3.0.1
+    steps:      
+      - uses: actions/checkout@v3
+        id: clone_repo
+
+      - uses: little-core-labs/get-git-tag@v3.0.2
         id: tagName              
       
       - name: Get commit messages
@@ -102,9 +105,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            ${{ github.workspace }}/release-assets/flutter_randomizer.exe
-            ${{ github.workspace }}/release-assets/app-release.apk
-            ${{ github.workspace }}/release-assets/app-release.aab
+            ${{ github.workspace }}/release-assets/flutter_randomizer_windows.zip
+            ${{ github.workspace }}/release-assets/flutter_randomizer.apk
+            ${{ github.workspace }}/release-assets/flutter_randomizer.aab
           tag_name: ${{ env.GIT_TAG_NAME }}
           name: Release ${{ env.GIT_TAG_NAME }}
           body: |
