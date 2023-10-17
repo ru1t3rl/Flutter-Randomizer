@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:context_menus/context_menus.dart';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:open_app_file/open_app_file.dart';
+import 'package:randomizer/widgets/file_context_menu.dart';
 
 class FilePreviewCard extends StatefulWidget {
   final String filePath;
@@ -27,6 +29,8 @@ class _FilePreviewCardState extends State<FilePreviewCard> {
   late File _file;
   late String _type;
   late bool _isFolder;
+
+  bool _isInPreview = false;
 
   @override
   void initState() {
@@ -76,7 +80,9 @@ class _FilePreviewCardState extends State<FilePreviewCard> {
         alignment: Alignment.center,
         child: AspectRatio(
           aspectRatio: 16.0 / 9.0,
-          child: Card(
+          child: ContextMenuRegion(
+            contextMenu: FileContextMenu(filePath: _file.path),
+            child: Card(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Stack(fit: StackFit.expand, children: [
@@ -123,6 +129,7 @@ class _FilePreviewCardState extends State<FilePreviewCard> {
                 ),
               ]),
             ),
+          ),
           ),
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:context_menus/context_menus.dart';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 
@@ -11,7 +12,6 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
-
   const MyApp({super.key});
 
   @override
@@ -31,13 +31,15 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
       ),
       home: Scaffold(
-        body: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 50, 12, 12),
-            child: [
-              const Home(),
-              const RandomFilePicker(),
-              const RandomNumber()
-            ][selectedPageIndex]),
+        body: ContextMenuOverlay(
+          child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 50, 12, 12),
+              child: [
+                const Home(),
+                const RandomFilePicker(),
+                const RandomNumber()
+              ][selectedPageIndex]),
+        ),
         bottomNavigationBar: NavigationBar(
           selectedIndex: selectedPageIndex,
           onDestinationSelected: (int index) {

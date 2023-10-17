@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:context_menus/context_menus.dart';
 import 'package:flutter/material.dart';
+
+import 'file_context_menu.dart';
 
 class FileHistoryCard extends StatefulWidget {
   List<FileSystemEntity> files;
@@ -120,31 +123,45 @@ class _FileHistoryCardState extends State<FileHistoryCard> {
                           children: [
                             for (final file in _files)
                               Center(
-                                child: Card(
-                                  elevation: 0,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .surfaceVariant,
-                                  child: ListTile(
-                                    leading: _getIcon(file.path
-                                        .split(Platform.pathSeparator)
-                                        .last),
-                                    title: Text(
-                                      file.path
-                                          .split(Platform.pathSeparator)
-                                          .last,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    // subtitle: Text(file.path),
-                                    trailing: InkWell(
-                                      splashColor: Theme.of(context)
+                                child: Tooltip(
+                                  message: file.path
+                                      .split(Platform.pathSeparator)
+                                      .last,
+                                  triggerMode: TooltipTriggerMode.tap,
+                                  waitDuration:
+                                      const Duration(milliseconds: 750),
+                                  preferBelow: false,
+                                  child: ContextMenuRegion(
+                                    contextMenu:
+                                        FileContextMenu(filePath: file.path),
+                                    child: Card(
+                                      elevation: 0,
+                                      color: Theme.of(context)
                                           .colorScheme
-                                          .secondaryContainer,
-                                      borderRadius: BorderRadius.circular(8),
-                                      onTap: () => {_handleTap(file)},
-                                      child: const Icon(
-                                          Icons.chevron_right_rounded,
-                                          size: 35),
+                                          .surfaceVariant,
+                                      child: ListTile(
+                                        leading: _getIcon(file.path
+                                            .split(Platform.pathSeparator)
+                                            .last),
+                                        title: Text(
+                                          file.path
+                                              .split(Platform.pathSeparator)
+                                              .last,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        // subtitle: Text(file.path),
+                                        trailing: InkWell(
+                                          splashColor: Theme.of(context)
+                                              .colorScheme
+                                              .secondaryContainer,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          onTap: () => {_handleTap(file)},
+                                          child: const Icon(
+                                              Icons.chevron_right_rounded,
+                                              size: 35),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
